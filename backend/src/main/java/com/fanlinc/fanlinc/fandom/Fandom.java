@@ -1,14 +1,17 @@
 package com.fanlinc.fanlinc.fandom;
 
 //import com.fanlinc.fanlinc.post.Post;
+import com.fanlinc.fanlinc.fandomUser.FandomUser;
 import com.fanlinc.fanlinc.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 @Entity
 @Table(name = "Fandoms")
 public class Fandom {
@@ -19,27 +22,49 @@ public class Fandom {
     @JsonProperty("fandomName")
     private String fandomName;
 
-    @JsonProperty("fandomOwnerId")
-    private Long fandomOwnerId;
-
     @JsonProperty("ownerEmail")
     private String ownerEmail;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {
-                    //CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "fandom_user",
-            joinColumns = { @JoinColumn(name = "fandom_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") })
-    private Set<User> users = new HashSet<>();
+    @JsonProperty("number")
+    private int number;
 
-    public Fandom(String fandomName, Long fandomOwnerId, String onwerEmail) {
+    @JsonProperty("fandom_pic")
+    private String fandom_pic;
+
+//    @JsonIgnore
+//    @ManyToMany(fetch = FetchType.EAGER,
+//            cascade = {
+//                    //CascadeType.PERSIST,
+//                    // CascadeType.MERGE
+//            })
+//    @JoinTable(name = "fandom_user",
+//            joinColumns = { @JoinColumn(name = "fandom_id") },
+//            inverseJoinColumns = { @JoinColumn(name = "user_id") })
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Set<User> users = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "fandom", cascade = CascadeType.ALL)
+//    @JsonIgnoreProperties({"fandom"})
+    @JsonBackReference
+    private Set<FandomUser> fandomUsers = new HashSet<>();
+
+    public void setFandomUsers (FandomUser newFu){
+        this.fandomUsers.add(newFu);
+        this.number = fandomUsers.size();
+    }
+    public Set<FandomUser> getFandomuser() { return this.fandomUsers; }
+
+    public void removeFandomUser(FandomUser fu) {
+        this.fandomUsers.remove(fu);
+        this.number = fandomUsers.size();
+    }
+
+    public Fandom(String fandomName, String ownerEmail) {
         this.fandomName = fandomName;
-        this.fandomOwnerId = fandomOwnerId;
         this.ownerEmail = ownerEmail;
+        this.fandom_pic = null;
+        this.number = 0;
     }
     public Fandom(){
 
@@ -59,10 +84,6 @@ public class Fandom {
         this.fandomName = fandomName;
     }
 
-    public Long getFandomOwnerId() { return fandomOwnerId; }
-
-    public void setFandomOwnerId(Long fandomOwnerId) {this.fandomOwnerId=fandomOwnerId; }
-
     public String getOwnerEmail() {
         return ownerEmail;
     }
@@ -71,8 +92,13 @@ public class Fandom {
         this.ownerEmail = ownerEmail;
     }
 
-    public Set<User> getUser() { return this.users; }
+//    public Set<User> getUser() { return this.users; }
+//
+//    public void setUsers(User newUser) {this.users.add(newUser); }
+//
+//    public void removeUser(User user) {this.users.remove(user); }
 
-    public void setUsers(User newUser) {this.users.add(newUser); }
-    public void removeUser(User user) {this.users.remove(user); }
+    public String getFandomPic(){return this.fandom_pic;}
+
+    public void setFandomPic(String fandom_pic){this.fandom_pic = fandom_pic;}
 }

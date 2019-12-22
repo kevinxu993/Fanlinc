@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
 import ApiService from '../../services/apiservice';
 import {Button, Input } from "@material-ui/core";
 import "./signup.css"
@@ -16,6 +15,7 @@ class signup extends Component{
             status:false
         };
         this.addUser = this.addUser.bind(this);
+        this.goToLogin = this.goToLogin.bind(this);
     }
 
     onChange = (e) =>
@@ -36,8 +36,9 @@ class signup extends Component{
                 console.log("Success");
                 let data = res.data;
                 console.log(data.id);
-                this.state.status = true;
-
+                this.setState({status: true});
+                alert("Sign Success!");
+                this.goToLogin()
             })
             .catch(error => {
                 console.log("Fail");
@@ -51,8 +52,8 @@ class signup extends Component{
     render() {
         return (
             <div>
-                <h2>Sign Up</h2>
-                <form>
+                <form className="form">
+                    <h2>Sign Up</h2>
                     <div className="form-group">
                         <label className="form-label">First Name:</label>
                         <Input type="text" placeholder="first name" name="firstName" className="form-control" value={this.state.firstName} onChange={this.onChange}/>
@@ -63,7 +64,7 @@ class signup extends Component{
                     </div>
                     <div className="form-group">
                         <label className="form-label">Email:</label>
-                        <Input type="email" placeholder="email" name="email" className="form-control" value={this.state.email} onChange={this.onChange}/>
+                        <Input type="email" placeholder="123@email.com" name="email" className="form-control" value={this.state.email} onChange={this.onChange}/>
                     </div>
                     <div className="form-group">
                         <label className="form-label">password:</label>
